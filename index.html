@@ -94,6 +94,7 @@ footer{margin-top:2rem;font-size:.9rem;color:var(--muted);max-width:38rem}
         <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required></div>
         <div class="field"><label for="phone">WhatsApp or phone number</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
       </div>
+      <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required></div>
       <div class="field"><label for="sells">What do you sell?</label><input id="sells" name="sells" required></div>
       <div class="field"><label for="volume">Orders per week</label>
         <select id="volume" name="volume"><option>Fewer than 20</option><option>20 to 100</option><option>More than 100</option></select>
@@ -103,7 +104,7 @@ footer{margin-top:2rem;font-size:.9rem;color:var(--muted);max-width:38rem}
 
     <div class="done" id="thanks" hidden>
       <h3>You’re on the list.</h3>
-      <p class="small">We’ll contact you on the number you gave us when early access opens.</p>
+      <p class="small">We’ve sent a confirmation to your email. Check your spam folder if you don’t see it.</p>
     </div>
 
     <div class="done" id="done" hidden>
@@ -125,7 +126,7 @@ footer{margin-top:2rem;font-size:.9rem;color:var(--muted);max-width:38rem}
 (function(){
   var EMAIL = "vens0992@gmail.com";
   // Paste your Google Apps Script web app URL (ends in /exec) between the quotes.
-  var SHEET_URL = "https://script.google.com/macros/s/AKfycbx9AUIJJadl4xwbcRoe8MPfd448ql__j8s41oaDQ4IBQyu7ZtcUpTngfoi7yOqN9NZE7g/exec";
+  var SHEET_URL = "https://script.google.com/macros/s/AKfycbwZ1WnBc_hr4kMcbIEohXKIhz-AVnXoG0CwG58kvG3qyiTLuQBe5TUhw6jnuhsJ0fBSUA/exec";
   var out = document.getElementById("out"), res = document.getElementById("res");
   var msgs = {yes: "Confirmed. Ada’s order goes to your closer.", no: "Cancelled. Nothing ships, so there’s no refused parcel to pay for."};
   var btns = document.querySelectorAll(".replies button");
@@ -153,12 +154,12 @@ footer{margin-top:2rem;font-size:.9rem;color:var(--muted);max-width:38rem}
   form.addEventListener("submit", function(e){
     e.preventDefault();
     var d = new FormData(form);
-    var t = ["Konfam waitlist", "Name: " + d.get("name"), "WhatsApp or phone: " + d.get("phone"), "Sells: " + d.get("sells"), "Orders per week: " + d.get("volume")].join("\n");
+    var t = ["Konfam waitlist", "Name: " + d.get("name"), "WhatsApp or phone: " + d.get("phone"), "Email: " + d.get("email"), "Sells: " + d.get("sells"), "Orders per week: " + d.get("volume")].join("\n");
     box.value = t;
     mail.href = "mailto:" + EMAIL + "?subject=" + encodeURIComponent("Konfam waitlist") + "&body=" + encodeURIComponent(t);
     if (!SHEET_URL) { showFallback(); return; }
     var body = new URLSearchParams();
-    ["name", "phone", "sells", "volume"].forEach(function(k){ body.append(k, d.get(k)); });
+    ["name", "phone", "email", "sells", "volume"].forEach(function(k){ body.append(k, d.get(k)); });
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending…";
     fetch(SHEET_URL, {method: "POST", mode: "no-cors", body: body}).then(function(){
